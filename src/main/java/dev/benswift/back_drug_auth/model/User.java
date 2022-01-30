@@ -68,30 +68,6 @@ public class User{
 	@JoinColumn
 	private List<Transaction> transactions = new ArrayList<>();
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn
-    private List<ScanPatient> scanPatients = new ArrayList<>();
-
-	@OneToMany(orphanRemoval = true)
-	@JoinColumn
-	private List<Retrait> retraits = new ArrayList<>();
-
-	public List<Retrait> getRetraits() {
-		return retraits;
-	}
-
-	public void setRetraits(List<Retrait> retraits) {
-		this.retraits = retraits;
-	}
-
-	public List<ScanPatient> getScanPatients() {
-        return scanPatients;
-    }
-
-    public void setScanPatients(List<ScanPatient> scanPatients) {
-        this.scanPatients = scanPatients;
-    }
-
     public List<Transaction> getTransactions() {
 		return transactions;
 	}

@@ -35,6 +35,10 @@ public class TransactionService {
         User user = userRepository.findByUsername(principal.getName()).orElse(null);
         if(user == null)
             return ResponseEntity.badRequest().body(new RuntimeException("'erreur': aucun utilisateur"));
+
+        if(viewModel.getBoites().isEmpty())
+            return ResponseEntity.badRequest().body(new RuntimeException("'erreur': aucun Boite Scannée"));
+
         Transaction t = new Transaction();
         List<BoiteMedicament> boites = new ArrayList<>();
         viewModel.getBoites().forEach(e ->{
@@ -45,20 +49,19 @@ public class TransactionService {
             b.setForme(formePharmaceutiqueRepository.getById(e.getForme()));
             boites.add(b);
         });
-        if(!boites.isEmpty())
-        {
-            Localisation l = new Localisation();
-            l.setLongitude(longitude);
-            l.setLatitude(lattitude);
-            t.setBoiteMedicaments(boites);
-            t.setStatus(false);
-            t.setDate(LocalDate.now());
-            t.setUser(user);
-            t.setDistributeur(distributeurRepository.getById(distributeurId));
-            t.setLocalisation(l);
-            t.setType("Commande");
-            System.out.println(t);
-        }
+
+        Localisation l = new Localisation();
+        l.setLongitude(longitude);
+        l.setLatitude(lattitude);
+        t.setBoiteMedicaments(boites);
+        t.setStatus(false);
+        t.setDate(LocalDate.now());
+        t.setUser(user);
+        t.setDistributeur(distributeurRepository.getById(distributeurId));
+        t.setLocalisation(l);
+        t.setType("Commande");
+        System.out.println(t);
+
         return ResponseEntity.ok().body(transactionRepository.save(t));
     }
 

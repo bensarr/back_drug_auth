@@ -54,12 +54,4 @@ public class Transaction {
     @JsonIgnore
     @OneToOne(mappedBy = "transaction")
     private Localisation localisation;
-
-    public List<BoiteMedicament> getBoiteMedicaments() {
-        return boiteMedicaments;
-    }
-
-    public void setBoiteMedicaments(List<BoiteMedicament> boiteMedicaments) {
-        this.boiteMedicaments = boiteMedicaments;
-    }
 }

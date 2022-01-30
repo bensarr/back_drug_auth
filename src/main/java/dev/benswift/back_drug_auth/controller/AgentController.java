@@ -27,7 +27,6 @@ public class AgentController {
         double longi = Double.parseDouble(longitude);
         double lat = Double.parseDouble(lattitude);
         Long distributeurId = Long.valueOf(distributeur);
-        System.out.println(viewModel);
         return transactionService.addCommande(viewModel, longi, lat, distributeurId, principal);
     }
 }

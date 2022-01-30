@@ -40,22 +40,6 @@ public class BoiteMedicament {
     @JoinColumn(name = "forme_id", nullable = false)
     private FormePharmaceutique forme;
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn
-    private List<ScanPatient> scanPatients = new ArrayList<>();
-
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn
-    private List<Retrait> retraits = new ArrayList<>();
-
     @ManyToMany(mappedBy = "boiteMedicaments")
     private Collection<Transaction> transactions;
-
-    public Collection<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(Collection<Transaction> transactions) {
-        this.transactions = transactions;
-    }
 }

@@ -23,16 +23,4 @@ public class Localisation {
     @JoinColumn(name = "transaction_id", referencedColumnName = "id")
     private Transaction transaction;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinTable(name = "localisation_scanpatient",
-            joinColumns = @JoinColumn(name = "localisation_null"),
-            inverseJoinColumns = @JoinColumn(name = "scanpatient_id"))
-    private ScanPatient scanpatient;
-
-    @OneToOne(orphanRemoval = true)
-    @JoinTable(name = "localisation_retrait",
-            joinColumns = @JoinColumn(name = "localisation_null"),
-            inverseJoinColumns = @JoinColumn(name = "retrait_id"))
-    private Retrait retrait;
-
 }
