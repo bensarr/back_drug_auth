@@ -20,13 +20,6 @@ public class JwtResponse{
 
 	private List<String> roles;
 
-	public JwtResponse(Long id, String username, String email,boolean enabled) {
-		this.id = id;
-		this.username = username;
-		this.email = email;
-		this.enabled = enabled;
-	}
-
 	public JwtResponse(String accessToken, Long id, String username, String email,
 					   boolean enabled,String nom, String prenom, String pays,
 					   LocalDateTime dateInscription,Distributeur distributeur, List<String> roles) {

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -27,15 +28,17 @@ public class BoiteMedicament {
     @Size(max = 100)
     private String code;
 
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateFabrication;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateExpiration;
+
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "bloc_id", nullable = false)
-    private BlocMedicament bloc;
-
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn
-    @ToString.Exclude
-    private List<Transaction> transactions = new ArrayList<>();
+    @JoinColumn(name = "forme_id", nullable = false)
+    private FormePharmaceutique forme;
 
     @OneToMany(orphanRemoval = true)
     @JoinColumn
@@ -45,4 +48,14 @@ public class BoiteMedicament {
     @JoinColumn
     private List<Retrait> retraits = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "boiteMedicaments")
+    private Collection<Transaction> transactions;
+
+    public Collection<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Collection<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 }

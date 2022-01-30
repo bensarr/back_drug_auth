@@ -45,6 +45,6 @@ public class FormePharmaceutique {
 
     @OneToMany(orphanRemoval = true)
     @JoinColumn
-    private List<BlocMedicament> blocMedicaments = new ArrayList<>();
+    private List<BoiteMedicament> boiteMedicaments = new ArrayList<>();
 
 }

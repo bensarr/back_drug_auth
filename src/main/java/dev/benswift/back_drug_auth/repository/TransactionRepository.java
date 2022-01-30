@@ -13,6 +13,5 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     List<Transaction> findAllByDistributeur(Distributeur distributeur);
     List<Transaction> findAllByUser(User utilisateur);
-    List<Transaction> findAllByBoiteMedicament(BoiteMedicament boiteMedicament);
 
 }

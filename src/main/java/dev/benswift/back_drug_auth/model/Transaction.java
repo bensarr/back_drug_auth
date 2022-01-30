@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Builder
@@ -23,6 +24,10 @@ public class Transaction {
 
     @NotBlank
     @Size(max = 100)
+    private String code = UUID.randomUUID().toString();
+
+    @NotBlank
+    @Size(max = 100)
     private String type;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -30,10 +35,11 @@ public class Transaction {
 
     private Boolean status;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "boite_id", nullable = false)
-    private BoiteMedicament boiteMedicament;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "transactions_boites",
+            joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "boite_id"))
+    private List<BoiteMedicament> boiteMedicaments = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne
@@ -49,4 +55,11 @@ public class Transaction {
     @OneToOne(mappedBy = "transaction")
     private Localisation localisation;
 
+    public List<BoiteMedicament> getBoiteMedicaments() {
+        return boiteMedicaments;
+    }
+
+    public void setBoiteMedicaments(List<BoiteMedicament> boiteMedicaments) {
+        this.boiteMedicaments = boiteMedicaments;
+    }
 }

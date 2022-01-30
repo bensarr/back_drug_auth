@@ -1,7 +1,10 @@
 package dev.benswift.back_drug_auth.service;
 
 import dev.benswift.back_drug_auth.model.BoiteMedicament;
+import dev.benswift.back_drug_auth.model.FormePharmaceutique;
+import dev.benswift.back_drug_auth.model.Transaction;
 import dev.benswift.back_drug_auth.repository.BoiteRepository;
+import dev.benswift.back_drug_auth.repository.FormePharmaceutiqueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,9 +16,20 @@ import java.util.List;
 public class BoiteService {
     @Autowired
     BoiteRepository boiteRepository;
+    @Autowired
+    FormePharmaceutiqueRepository formePharmaceutiqueRepository;
 
-    public ResponseEntity<BoiteMedicament> add(BoiteMedicament boiteMedicament) {
-        return ResponseEntity.ok(boiteRepository.save(boiteMedicament));
+    public BoiteMedicament makeCommande(BoiteMedicament boite, Long formeId, LocalDate dateFabrication, LocalDate dateExpiration)
+    {
+        boite.setDateFabrication(dateFabrication);
+        boite.setDateExpiration(dateExpiration);
+        FormePharmaceutique forme = formePharmaceutiqueRepository.findById(formeId).orElse(null);
+        boite.setForme(forme);
+        return boiteRepository.save(boite);
+    }
+
+    public BoiteMedicament add(BoiteMedicament boiteMedicament) {
+        return boiteRepository.save(boiteMedicament);
     }
 
     public ResponseEntity<List<BoiteMedicament>> getAll() {
@@ -28,9 +42,8 @@ public class BoiteService {
 
     public ResponseEntity<String> isSure(String code){
         String response = "";
-        BoiteMedicament bm = isSureCode(code);
+        BoiteMedicament bm = this.isSureCode(code);
         if(bm != null){
-            response+="1";
             if(isSureNotExpired(bm))
                 response += "1";
             else
@@ -39,10 +52,7 @@ public class BoiteService {
                 response += "1";
             else
                 response += "0";
-
         }
-        else
-            response += "000";
         return ResponseEntity.ok(response);
     }
 
@@ -51,11 +61,11 @@ public class BoiteService {
     }
 
     private boolean isSureNotExpired(BoiteMedicament boiteMedicament) {
-        return boiteMedicament.getBloc().getDateExpiration().isAfter(LocalDate.now());
+        return boiteMedicament.getDateExpiration().isAfter(LocalDate.now());
     }
 
     private boolean isSureForme(BoiteMedicament boiteMedicament) {
-        return boiteMedicament.getBloc().getForme().getStatus();
+        return boiteMedicament.getForme().getStatus();
     }
 
     public List<BoiteMedicament> remove(BoiteMedicament boiteMedicament) {

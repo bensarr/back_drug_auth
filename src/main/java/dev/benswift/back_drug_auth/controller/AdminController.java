@@ -38,7 +38,7 @@ public class AdminController {
         return distributeurService.getAllDistributeurs();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_AGENT','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_AGENT','ROLE_ADMIN','ROLE_ADMIN_PLATEFORME')")
     @GetMapping("/medicaments")
     public ResponseEntity<List<Medicament>> medicaments(){
         return medicamentService.getAll();
@@ -50,7 +50,7 @@ public class AdminController {
         return medicamentService.add(medicament);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_AGENT','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_AGENT','ROLE_ADMIN','ROLE_ADMIN_PLATEFORME')")
     @GetMapping("/formes")
     public ResponseEntity<List<FormePharmaceutique>> formes(@RequestParam("medicament") String medicamentId){
         Long id = Long.valueOf(medicamentId);
@@ -69,6 +69,14 @@ public class AdminController {
     public ResponseEntity<List<JwtResponse>> utilisateurs(Principal principal)
     {
         return userAdminService.getAll(principal);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_PLATEFORME','ROLE_ADMIN')")
+    @PostMapping("/utilisateurs")
+    public ResponseEntity<?> lock(@RequestParam("user") String userId)
+    {
+        Long id = Long.valueOf(userId);
+        return userAdminService.lock(id);
     }
 
 }
