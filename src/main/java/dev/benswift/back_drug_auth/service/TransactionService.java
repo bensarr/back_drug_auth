@@ -25,6 +25,8 @@ public class TransactionService {
     BoiteRepository boiteRepository;
     @Autowired
     DistributeurRepository distributeurRepository;
+    @Autowired
+    LocalisationRepository localisationRepository;
 
     public ResponseEntity<?> addCommande(TransactionViewModel viewModel,
                                          double longitude,
@@ -42,36 +44,45 @@ public class TransactionService {
         Transaction t = new Transaction();
         List<BoiteMedicament> boites = new ArrayList<>();
         viewModel.getBoites().forEach(e ->{
-            BoiteMedicament b = new BoiteMedicament();
-            b.setCode(e.getCode());
-            b.setDateExpiration(LocalDate.parse(e.getDateExpiration()));
-            b.setDateFabrication(LocalDate.parse(e.getDateFabrication()));
-            b.setForme(formePharmaceutiqueRepository.getById(e.getForme()));
+            BoiteMedicament b;
+            if(boiteRepository.existsByCode(e.getCode()))
+                b = boiteRepository.findByCode(e.getCode());
+            else {
+                b = new BoiteMedicament();
+                b.setCode(e.getCode());
+                b.setDateExpiration(LocalDate.parse(e.getDateExpiration()));
+                b.setDateFabrication(LocalDate.parse(e.getDateFabrication()));
+                b.setForme(formePharmaceutiqueRepository.getById(e.getForme()));
+            }
             boites.add(b);
         });
 
         Localisation l = new Localisation();
         l.setLongitude(longitude);
         l.setLatitude(lattitude);
-        t.setBoiteMedicaments(boites);
+        t.setBoiteMedicaments(boiteRepository.saveAll(boites));
         t.setStatus(false);
         t.setDate(LocalDate.now());
         t.setUser(user);
         t.setDistributeur(distributeurRepository.getById(distributeurId));
-        t.setLocalisation(l);
+        t.setLocalisation(localisationRepository.save(l));
         t.setType("Commande");
         System.out.println(t);
 
         return ResponseEntity.ok().body(transactionRepository.save(t));
     }
 
-    public Transaction add(Transaction transaction, Principal principal)
+    public ResponseEntity<?> all(Principal principal)
     {
-        User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + principal.getName()));;
-        transaction.setUser(user);
-        return transactionRepository.save(transaction);
-    }
+        User user = userRepository.findByUsername(principal.getName()).orElse(null);
 
+        if(user == null)
+            return ResponseEntity.badRequest().body(new RuntimeException("'erreur': utilisateur introuvable"));
+        Distributeur distributeur = user.getDistributeur();
+        if(distributeur == null)
+            return ResponseEntity.badRequest().body(new RuntimeException("'erreur': distributeur introuvable"));
+        return ResponseEntity.ok().body(transactionRepository.findAllByDistributeurId(distributeur.getId()));
+    }
     public Transaction validate(Transaction transaction)
     {
         Transaction existingTransaction = transactionRepository.findById(transaction.getId()).orElse(null);
@@ -80,10 +91,6 @@ public class TransactionService {
             return transactionRepository.save(existingTransaction);
         }
         return null;
-    }
-    public List<Transaction> getAllByDistributeur(Distributeur distributeur)
-    {
-        return transactionRepository.findAllByDistributeur(distributeur);
     }
     public List<Transaction> getAllByDistributeur(User user)
     {

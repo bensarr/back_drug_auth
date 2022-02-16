@@ -117,6 +117,13 @@ public class DistributeurService {
     {
         return ResponseEntity.ok(distributeurRepository.findAll());
     }
+    public ResponseEntity<?> lock(Long id)
+    {
+        Distributeur d = distributeurRepository.getById(id);
+        d.setEnabled(!d.getEnabled());
+        distributeurRepository.save(d);
+        return ResponseEntity.ok("Distributeur Edit successed");
+    }
     private Set<Role> initRole(ERole eRole)
     {
         Set<Role> roles = new HashSet<>();

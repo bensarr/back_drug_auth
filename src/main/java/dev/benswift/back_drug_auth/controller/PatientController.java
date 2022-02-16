@@ -18,11 +18,4 @@ public class PatientController {
     BoiteService boiteService;
     @Autowired
     TransactionService transactionService;
-
-    @GetMapping("/authentify")
-    public ResponseEntity<String> authentify(@RequestBody Transaction transaction, @RequestParam("code") String code, Principal principal)
-    {
-        transactionService.add(transaction, principal);
-        return boiteService.isSure(code);
-    }
 }

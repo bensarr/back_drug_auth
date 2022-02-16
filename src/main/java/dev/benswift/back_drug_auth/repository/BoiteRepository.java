@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoiteRepository extends JpaRepository<BoiteMedicament,Long> {
     BoiteMedicament findByCode(String code);
+    Boolean existsByCode(String code);
 }

@@ -35,11 +35,11 @@ public class BoiteMedicament {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateExpiration;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "forme_id", nullable = false)
     private FormePharmaceutique forme;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "boiteMedicaments")
     private Collection<Transaction> transactions;
 }

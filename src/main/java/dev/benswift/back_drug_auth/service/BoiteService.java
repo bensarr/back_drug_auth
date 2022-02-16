@@ -5,6 +5,7 @@ import dev.benswift.back_drug_auth.model.FormePharmaceutique;
 import dev.benswift.back_drug_auth.model.Transaction;
 import dev.benswift.back_drug_auth.repository.BoiteRepository;
 import dev.benswift.back_drug_auth.repository.FormePharmaceutiqueRepository;
+import dev.benswift.back_drug_auth.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,13 @@ public class BoiteService {
     BoiteRepository boiteRepository;
     @Autowired
     FormePharmaceutiqueRepository formePharmaceutiqueRepository;
+    @Autowired
+    TransactionRepository transactionRepository;
 
-    public BoiteMedicament makeCommande(BoiteMedicament boite, Long formeId, LocalDate dateFabrication, LocalDate dateExpiration)
+    public ResponseEntity<List<BoiteMedicament>> allByTransactionCode(String code)
     {
-        boite.setDateFabrication(dateFabrication);
-        boite.setDateExpiration(dateExpiration);
-        FormePharmaceutique forme = formePharmaceutiqueRepository.findById(formeId).orElse(null);
-        boite.setForme(forme);
-        return boiteRepository.save(boite);
+        Transaction transaction = transactionRepository.findByCode(code);
+        return ResponseEntity.ok().body(transaction.getBoiteMedicaments());
     }
 
     public BoiteMedicament add(BoiteMedicament boiteMedicament) {

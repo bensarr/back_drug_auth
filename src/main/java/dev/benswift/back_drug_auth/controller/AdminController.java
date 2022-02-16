@@ -7,6 +7,7 @@ import dev.benswift.back_drug_auth.payload.response.JwtResponse;
 import dev.benswift.back_drug_auth.security.services.DistributeurService;
 import dev.benswift.back_drug_auth.service.FormeService;
 import dev.benswift.back_drug_auth.service.MedicamentService;
+import dev.benswift.back_drug_auth.service.TransactionService;
 import dev.benswift.back_drug_auth.service.UserAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +32,21 @@ public class AdminController {
     FormeService formeService;
     @Autowired
     UserAdminService userAdminService;
+    @Autowired
+    TransactionService transactionService;
 
     @GetMapping("/distributeurs")
     public ResponseEntity<List<Distributeur>> distributeurs()
     {
         return distributeurService.getAllDistributeurs();
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_PLATEFORME')")
+    @PostMapping("/distributeurs/lock")
+    public ResponseEntity<?> lockDistributeur(@RequestParam("distributeur") String distributeurId)
+    {
+        Long id = Long.valueOf(distributeurId);
+        return distributeurService.lock(id);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_AGENT','ROLE_ADMIN','ROLE_ADMIN_PLATEFORME')")
@@ -78,5 +89,13 @@ public class AdminController {
         Long id = Long.valueOf(userId);
         return userAdminService.lock(id);
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_PLATEFORME','ROLE_ADMIN')")
+    @GetMapping("/transactions")
+    public ResponseEntity<?> transactionsByDistributeur(Principal principal)
+    {
+        return transactionService.all(principal);
+    }
+
 
 }
